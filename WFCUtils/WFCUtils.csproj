@@ -41,7 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ListViewEx.cs">
+    <Compile Include="ListViewObjectBinding.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ListViewReorderer.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

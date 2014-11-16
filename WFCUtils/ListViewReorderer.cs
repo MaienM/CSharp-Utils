@@ -11,27 +11,54 @@ using System.Windows.Forms;
 namespace WFCUtils
 {
     /// <summary>
-    /// An extended version of the default ListView control that supports drag drop reordering of it's contents.
+    /// An extension for ListView controls that add support for drag drop reordering of it's contents.
     /// </summary>
-    public partial class ListViewEx : ListView
+    public class ListViewReorderer : Component
     {
         /// <summary>
-        /// Create a new ListViewEx control.
+        /// The ListView this reorderer belongs to.
         /// </summary>
-        public ListViewEx()
-            : base()
-        {
-            ItemDrag += OnItemDrag;
-            DragEnter += OnDragEnter;
-            DragDrop += OnDragDrop;
+        public ListView View {
+            get
+            {
+                return _view;
+            }
+            set {
+                if (_view != null)
+                {
+                    _view.ItemDrag -= OnItemDrag;
+                    _view.DragEnter -= OnDragEnter;
+                    _view.DragDrop -= OnDragDrop;
+                }
+                _view = value;
+                if (_view != null)
+                {
+                    _view.ItemDrag += OnItemDrag;
+                    _view.DragEnter += OnDragEnter;
+                    _view.DragDrop += OnDragDrop;
+                }
+            }
         }
+        private ListView _view;
+
+        /// <summary>
+        /// This event is thrown when the list is reordered through drag and drop.
+        /// </summary>
+        public event ReorderEventHandler Reorder;
+
+        /// <summary>
+        /// The delegate for handling a Reorder event.
+        /// </summary>
+        /// <param name="sender">The source control</param>
+        /// <param name="e">The event</param>
+        public delegate void ReorderEventHandler(object sender, ListViewReorderEventArgs e);
 
         /// <summary>
         /// On drag start, set the correct effect.
         /// </summary>
         private void OnItemDrag(object sender, ItemDragEventArgs e)
         {
-            DoDragDrop(e.Item, DragDropEffects.Link);
+            View.DoDragDrop(e.Item, DragDropEffects.Link);
         }
 
         /// <summary>
@@ -52,14 +79,14 @@ namespace WFCUtils
         private void OnDragDrop(object sender, DragEventArgs e)
         {
             // Get the end of the drag.
-            Point targetPoint = PointToClient(new Point(e.X, e.Y));
-            ListViewItem targetItem = GetItemAt(targetPoint.X, targetPoint.Y);
+            Point targetPoint = View.PointToClient(new Point(e.X, e.Y));
+            ListViewItem targetItem = View.GetItemAt(targetPoint.X, targetPoint.Y);
 
             // Not dragged onto another item, so first or last it is.
             if (targetItem == null)
             {
                 // First.
-                if (Items[0].Position.Y > targetPoint.Y)
+                if (View.Items[0].Position.Y > targetPoint.Y)
                 {
                     MoveSelectedTo(0);
                 }
@@ -96,19 +123,45 @@ namespace WFCUtils
             // Take care of negative indexes.
             if (index < 0)
             {
-                index = Items.Count + 1 + index;
+                index = View.Items.Count + 1 + index;
             }
 
+            // Build the event.
+            ListViewReorderEventArgs e = new ListViewReorderEventArgs();
+            e.Index = index;
+
             // Move the items.
-            foreach (ListViewItem item in SelectedItems)
+            foreach (ListViewItem item in View.SelectedItems)
             {
                 if (item.Index < index)
                 {
                     index--;
                 }
-                Items.Remove(item);
-                Items.Insert(index++, item);
+                View.Items.Remove(item);
+                View.Items.Insert(index++, item);
+                e.Items.Add(item);
+            }
+
+            // Trigger the event.
+            if (Reorder != null) {
+                Reorder(View, e);
             }
         }
+    }
+
+    /// <summary>
+    /// Event arguments for a ListViewEx.Reorder event.
+    /// </summary>
+    public class ListViewReorderEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The items that were moved.
+        /// </summary>
+        public List<ListViewItem> Items = new List<ListViewItem>();
+
+        /// <summary>
+        /// The index the items were moved to.
+        /// </summary>
+        public int Index;
     }
 }
