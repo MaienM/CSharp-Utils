@@ -3,7 +3,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace MaienM.Utils
+namespace CSharpUtils.Utils
 {
 	public class ConfigHelper
 	{

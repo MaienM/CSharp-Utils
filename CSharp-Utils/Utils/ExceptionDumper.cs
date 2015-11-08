@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ObjectDumper;
 
-namespace Abelan
+namespace CSharpUtils.Utils
 {
     /// <summary>
     /// Class that makes it easier to generate crash logs with enough information to solve the issue.

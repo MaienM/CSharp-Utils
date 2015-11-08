@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WFCUtils
+namespace CSharpUtils.Extensions.ListViewExtensions
 {
     /// <summary>
     /// An extension for ListView controls that add support for drag drop reordering of it's contents.
