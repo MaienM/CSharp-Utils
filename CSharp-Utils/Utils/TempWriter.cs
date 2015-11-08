@@ -10,7 +10,7 @@ namespace CSharpUtils.Utils
     /// <summary>
     /// Class that makes it easy to write to a temp file that will be moved to it's final destination once it has fully been written.
     /// </summary>
-    class TempWriter
+    public class TempWriter
     {
         /// <summary>
         /// The temp file path.

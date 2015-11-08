@@ -7,8 +7,8 @@
     <ProjectGuid>{FA2E97FD-0F81-4266-9E1D-3C532B409D55}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WFCUtils</RootNamespace>
-    <AssemblyName>WFCUtils</AssemblyName>
+    <RootNamespace>CSharpUtils</RootNamespace>
+    <AssemblyName>CSharpUtils</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -28,6 +28,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ObjectDumper">
@@ -53,6 +56,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ConfigDialog.cs" />
     <Compile Include="Utils\ExceptionDumper.cs" />
+    <Compile Include="Utils\StatusLogger.cs" />
+    <Compile Include="Utils\TempWriter.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>

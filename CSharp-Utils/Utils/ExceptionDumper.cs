@@ -12,7 +12,7 @@ namespace CSharpUtils.Utils
     /// <summary>
     /// Class that makes it easier to generate crash logs with enough information to solve the issue.
     /// </summary>
-    class ExceptionDumper
+    public class ExceptionDumper
     {
         /// <summary>
         /// The exception.
