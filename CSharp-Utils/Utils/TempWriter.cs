@@ -45,6 +45,7 @@ namespace CSharpUtils.Utils
             {
                 File.Delete(FinalPath);
             }
+            Directory.CreateDirectory(Path.GetDirectoryName(FinalPath));
             File.Move(TempPath, FinalPath);
         }
     }

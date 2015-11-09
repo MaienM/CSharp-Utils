@@ -13,7 +13,19 @@ namespace CSharpUtils.Utils
 
         private StatusLogger()
         {
+            Changed += OnChanged;
+
+            // Truncate log file.
+            if (File.Exists("statuslogger.log"))
+            {
+                using (FileStream fileStream = new FileStream("statuslogger.log", FileMode.Truncate))
+                {
+                    fileStream.SetLength(0);
+                }
+            }
         }
+
+        public EventHandler<StatusChangeEventArgs> Changed = (object sender, StatusChangeEventArgs e) => { };
 
         private Dictionary<String, Object> data = new Dictionary<String, Object>();
 
@@ -48,20 +60,16 @@ namespace CSharpUtils.Utils
             GetGroupAndKey(fullKey, out group, out key);
 
             // Log the data change.
-            using (StreamWriter writer = new StreamWriter("statuslogger.log", true))
+            if (group.ContainsKey(key))
             {
-                String timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                if (group.ContainsKey(key))
+                if (FormatValue(group[key]) != FormatValue(value))
                 {
-                    if (FormatValue(group[key]) != FormatValue(value))
-                    {
-                        writer.WriteLine("[{0}] {1}: {2} -> {3}", timestamp, fullKey, FormatValue(group[key]), FormatValue(value));
-                    }
+                    Changed(this, new StatusChangeEventArgs(fullKey, group[key], value));
                 }
-                else
-                {
-                    writer.WriteLine("[{0}] {1}: {2}", timestamp, fullKey, FormatValue(value));
-                }
+            }
+            else
+            {
+                Changed(this, new StatusChangeEventArgs(fullKey, null, value));
             }
 
             // Set the value.
@@ -92,9 +100,28 @@ namespace CSharpUtils.Utils
             remainingKey = parts.Last();
         }
 
-        private String FormatValue(Object value)
+        public static String FormatValue(Object value)
         {
+            if (value == null) {
+                return "null";
+                }
             return value.ToString();
+        }
+
+        private void OnChanged(object sender, StatusChangeEventArgs e)
+        {
+            String timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            using (StreamWriter writer = new StreamWriter("statuslogger.log", true))
+            {
+                if (e.newValue == null)
+                {
+                    writer.WriteLine("[{0}] {1}: {2} -> {3}", timestamp, e.key, e.oldValueString, e.newValueString);
+                }
+                else
+                {
+                    writer.WriteLine("[{0}] {1}: {2}", timestamp, e.key, e.newValueString);
+                }
+            }
         }
 
         public void Dump()
@@ -115,6 +142,24 @@ namespace CSharpUtils.Utils
                     Console.WriteLine("{0}.{1}: {2}", key, entry.Key, FormatValue(entry.Value));
                 }
             }
+        }
+    }
+
+    public class StatusChangeEventArgs
+    {
+        public String key { get; private set; }
+        public Object oldValue { get; private set; }
+        public String oldValueString { get; private set; }
+        public Object newValue { get; private set; }
+        public String newValueString { get; private set; }
+
+        public StatusChangeEventArgs(String key, Object oldValue, Object newValue)
+        {
+            this.key = key;
+            this.oldValue = oldValue;
+            this.oldValueString = StatusLogger.FormatValue(oldValue);
+            this.newValue = newValue;
+            this.newValueString = StatusLogger.FormatValue(newValue);
         }
     }
 }
