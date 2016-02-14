@@ -22,7 +22,7 @@ namespace CSharpUtils.Utils
         /// <summary>
         /// The extra data.
         /// </summary>
-        private Dictionary<String, Object> data = new Dictionary<String, Object>();
+        private Dictionary<string, object> data = new Dictionary<string, object>();
 
         public ExceptionDumper(Exception e)
         {
@@ -32,7 +32,7 @@ namespace CSharpUtils.Utils
         /// <summary>
         /// Add a variable to the crash log.
         /// </summary>
-        public void Dump(String key, Object value)
+        public void Dump(string key, object value)
         {
             this.data.Add(key, value);
         }
@@ -40,9 +40,9 @@ namespace CSharpUtils.Utils
         /// <summary>
         /// Add the contents of a file to the crash log.
         /// </summary>
-        public void DumpFile(String key, String path)
+        public void DumpFile(string key, string path)
         {
-            String value = "";
+            string value = "";
             try
             {
                 using (StreamReader reader = File.OpenText(path))
@@ -57,28 +57,33 @@ namespace CSharpUtils.Utils
             this.Dump(key, value);
         }
 
-        /// <summary>
-        /// Save the error log.
-        /// </summary>
-        /// <returns>The path of the log</returns>
-        public String Save()
+        public string Format()
         {
-            String filename = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                String.Format("ErrorReport {0}.log", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss fff"))
-            );
-            using (StreamWriter writer = new StreamWriter(filename, false))
+            using (StringWriter writer = new StringWriter())
             {
                 writer.WriteLine("===== Exception =====");
                 writer.WriteLine(this.exception.ToString());
                 writer.WriteLine();
                 writer.WriteLine("===== Dump =====");
-                foreach (KeyValuePair<String, Object> data in this.data)
+                foreach (KeyValuePair<string, object> data in this.data)
                 {
                     Dumper.Dump(data.Value, data.Key, writer);
                     writer.WriteLine();
                 }
+                return writer.GetStringBuilder().ToString();
             }
+        }
+
+        /// <summary>
+        /// Save the error log.
+        /// </summary>
+        /// <returns>The path of the log</returns>
+        public string SaveToFile()
+        {
+            string filename = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                string.Format("ErrorReport {0}.log", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss fff"))
+            );
             return filename;
         }
     }

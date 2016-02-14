@@ -15,7 +15,7 @@ namespace CSharpUtils.Utils
         /// <summary>
         /// The temp file path.
         /// </summary>
-        public String TempPath { get; private set; }
+        public string TempPath { get; private set; }
 
         /// <summary>
         /// Stream writer for the temp file.
@@ -25,9 +25,9 @@ namespace CSharpUtils.Utils
         /// <summary>
         /// The ultimate destination path.
         /// </summary>
-        public String FinalPath { get; private set; }
+        public string FinalPath { get; private set; }
 
-        public TempWriter(String path)
+        public TempWriter(string path)
         {
             FinalPath = path;
 

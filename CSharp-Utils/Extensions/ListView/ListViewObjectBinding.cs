@@ -41,7 +41,7 @@ namespace CSharpUtils.Extensions.ListViewExtensions
         /// <summary>
         /// The Collection that provides the data.
         /// </summary>
-        public ICollection<Object> Data
+        public ICollection<object> Data
         {
             get
             {
@@ -53,7 +53,7 @@ namespace CSharpUtils.Extensions.ListViewExtensions
                 Update();
             }
         }
-        private ICollection<Object> _data;
+        private ICollection<object> _data;
 
         /// <summary>
         /// The type of the data in the Data list.
@@ -77,7 +77,7 @@ namespace CSharpUtils.Extensions.ListViewExtensions
 
             // Make sure each data object has a ListViewItem.
             int index = 0;
-            foreach (Object data in Data)
+            foreach (object data in Data)
             {
                 // Check if there is a ListViewItem.
                 // If there is, move it.
