@@ -25,7 +25,7 @@ namespace CSharpUtils.Utils
             foreach (ServiceBase service in this)
             {
                 Console.WriteLine("Starting service {0}", service.ServiceName);
-                service.GetType().GetMethod("OnStart", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(service, new object[] { new String[0] });
+                service.GetType().GetMethod("OnStart", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(service, new object[] { new string[0] });
             }
         }
 
