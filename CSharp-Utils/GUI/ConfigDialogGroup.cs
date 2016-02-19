@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.Entity;
 using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using CSharpUtils.Utils;
 
@@ -177,6 +183,55 @@ namespace CSharpUtils.GUI
 
                 return new Tuple<TextBox, Label, FileDialog>(controls.Item1, controls.Item2, browser);
             }
+
+            /// <summary>
+            ///     Add a table-backed dataset to this group.
+            /// </summary>
+            /// <param name="context">The context of the dataset</param>
+            /// <param name="dataSet">The dataset to control</param>
+            /// <param name="label">The label of the property</param>
+            /// <returns>The control for the property</returns>
+            public DataGridView AddDataGridView<D>(DbContext context, DbSet<D> dataSet, string label) where D : class
+            {
+                // Create the main control.
+                DataGridView control = new DataGridView
+                {
+                    AllowUserToAddRows = true,
+                    AllowUserToDeleteRows = true,
+                    ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                };
+
+                // On loading, setup the control with the dataset.
+                this._dialog.Loading += (sender, args) =>
+                {
+                    // Create the binding list for the data.
+                    BindingList<D> data = new BindingList<D>(dataSet.ToList());
+
+                    // Setup the gridview with the binding list.
+                    control.DataSource = data;
+
+                    // Add the event handlers to process adding and removing rows.
+                    control.UserAddedRow += (o, innerArgs) =>
+                    {
+                        dataSet.Add(data[innerArgs.Row.Index - 1]);
+                    };
+                    control.UserDeletingRow += (o, innerArgs) =>
+                    {
+                        dataSet.Remove(data[innerArgs.Row.Index]);
+                    };
+                };
+                
+                // On saving, save the context associated with the dataset.
+                this._dialog.Saving += (sender, args) =>
+                {
+                    context.SaveChanges();
+                };
+
+                // Setup the control.
+                this.AddControl(label, control);
+
+                return control;
+            }
             // ReSharper enable UnusedMethodReturnValue.Global
             #endregion
 
@@ -194,11 +249,11 @@ namespace CSharpUtils.GUI
             }
 
             /// <summary>
-            ///     Add a property to this group.
+            ///     Add a control to this group.
             /// </summary>
-            /// <param name="label">The label of the property</param>
-            /// <param name="control">The control for the property</param>
-            private void AddControl(string label, Control control)
+            /// <param name="label">The label of the control</param>
+            /// <param name="control">The control</param>
+            public void AddControl(string label, Control control)
             {
                 // Setup the control's basic properties.
                 control.Dock = DockStyle.Fill;
