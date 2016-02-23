@@ -4,6 +4,9 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using System.ComponentModel;
+using System.Linq;
+using System.ServiceProcess;
+
 using CSharpUtils.Utils;
 
 namespace CSharpUtils.GUI
@@ -101,8 +104,8 @@ namespace CSharpUtils.GUI
 
             // Some default event handlers.
             this.Shown += this.ShownLoadSetttings;
-            this.PreviewSaving += this.PreviewSavingServices;
-            this.Saved += this.SavedServices;
+            this.PreviewSaving += this.PreviewSavingServicesRestart;
+            this.Saved += this.SavedServicesRestart;
         }
 
         /// <summary>
@@ -110,29 +113,44 @@ namespace CSharpUtils.GUI
         /// </summary>
         protected ServicesCollection Services { private get; set; }
 
-        private void PreviewSavingServices(object sender, CancelEventArgs e)
+        private void PreviewSavingServicesRestart(object sender, CancelEventArgs e)
         {
             if (this.Services == null)
             {
                 return;
             }
 
-            // Prompt to confirm saving/restarting.
-            DialogResult dialogResult = MessageBox.Show(
-                "The service(s) will now be restarted if currently running. Are you sure you want to proceed?",
-                "Save/restart service(s)",
-                MessageBoxButtons.YesNo
-            );
-            if (dialogResult != DialogResult.Yes)
+            this.Saved -= this.SavedServicesRestart;
+            if (this.Services.GetStatuses().Values.Any(s => s == ServiceControllerStatus.Running))
             {
-                e.Cancel = true;
+                // Prompt to confirm saving/restarting.
+                DialogResult dialogResult = MessageBox.Show(
+                    "The service(s) that is/are currently running will now be restarted. Are you sure you want to proceed? (Services that are not running will NOT be started).", 
+                    "Save/restart service(s)", 
+                    MessageBoxButtons.YesNo
+                );
+                if (dialogResult != DialogResult.Yes)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    this.Saved += this.SavedServicesRestart;
+                }
             }
         }
 
-        private void SavedServices(object sender, EventArgs e)
+        private void SavedServicesRestart(object sender, EventArgs e)
         {
-            // Restart services.
-            this.Services?.InvokeRestart();
+            if (this.Services == null)
+            {
+                return;
+            }
+
+            // Restart only running services.
+            ServicesCollection runningServices = new ServicesCollection();
+            runningServices.AddRange(from entry in this.Services.GetStatuses() where entry.Value == ServiceControllerStatus.Running select entry.Key);
+            runningServices.InvokeRestart();
         }
 
         private void ShownLoadSetttings(object sender, EventArgs e)
