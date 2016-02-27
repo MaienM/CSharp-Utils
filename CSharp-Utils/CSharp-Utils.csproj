@@ -83,7 +83,9 @@
     <Compile Include="Utils\ExceptionDumper.cs" />
     <Compile Include="Utils\ServicesManager.cs" />
     <Compile Include="Utils\ServicesCollection.cs" />
-    <Compile Include="Utils\StatusLogger.cs" />
+    <Compile Include="Utils\StatusLogger\StatusLogger.cs" />
+    <Compile Include="Utils\StatusLogger\StatusLoggerServer.cs" />
+    <Compile Include="Utils\StatusLogger\StatusLoggerWriter.cs" />
     <Compile Include="Utils\TempWriter.cs" />
     <Compile Include="Utils\User32.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
