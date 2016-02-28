@@ -43,6 +43,10 @@
       <HintPath>..\..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NamedPipeWrapper, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NamedPipeWrapper.1.4.0\lib\net40\NamedPipeWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ObjectDumper">
       <HintPath>..\..\..\packages\ObjectDumper.1.0.0.12\lib\net35-Client\ObjectDumper.dll</HintPath>
     </Reference>
@@ -70,6 +74,12 @@
     <Compile Include="GUI\ConfigDialogGroup.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GUI\StatusDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\StatusDisplay.Designer.cs">
+      <DependentUpon>StatusDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -83,7 +93,9 @@
     <Compile Include="Utils\ExceptionDumper.cs" />
     <Compile Include="Utils\ServicesManager.cs" />
     <Compile Include="Utils\ServicesCollection.cs" />
-    <Compile Include="Utils\StatusLogger\StatusLogger.cs" />
+    <Compile Include="Utils\StatusLogger\BaseStatusLogger.cs" />
+    <Compile Include="Utils\StatusLogger\LocalStatusLogger.cs" />
+    <Compile Include="Utils\StatusLogger\RemoteStatusLogger.cs" />
     <Compile Include="Utils\StatusLogger\StatusLoggerServer.cs" />
     <Compile Include="Utils\StatusLogger\StatusLoggerWriter.cs" />
     <Compile Include="Utils\TempWriter.cs" />
@@ -98,6 +110,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GUI\StatusDisplay.resx">
+      <DependentUpon>StatusDisplay.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

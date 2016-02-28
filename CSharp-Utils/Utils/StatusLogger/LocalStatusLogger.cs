@@ -4,31 +4,39 @@ using System.Linq;
 
 namespace CSharpUtils.Utils.StatusLogger
 {
-    public class StatusLogger
+    public class LocalStatusLogger : BaseStatusLogger
     {
-        private static StatusLogger instance;
-
-        public EventHandler<StatusChangeEventArgs> Changed = (sender, e) => { };
+        private static LocalStatusLogger instance;
         
         private readonly Dictionary<string, object> _data = new Dictionary<string, object>();
 
-        public static StatusLogger GetInstance()
+        public static LocalStatusLogger GetInstance()
         {
-            return instance ?? (instance = new StatusLogger());
+            return instance ?? (instance = new LocalStatusLogger());
         }
 
         public void SetStatus(string key, bool value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, bool? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, short value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, short? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, int value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, int? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, uint value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, uint? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, long value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, long? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, ulong value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, ulong? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, double value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, double? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, float value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, float? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, string value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, char value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, char? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, char[] value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, byte value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, byte? value) { this.InnerSetStatus(key, value); }
         public void SetStatus(string key, byte[] value) { this.InnerSetStatus(key, value); }
 
         private void InnerSetStatus(string fullKey, object value)
@@ -108,24 +116,6 @@ namespace CSharpUtils.Utils.StatusLogger
                     Console.WriteLine($"{key}.{entry.Key}: {FormatValue(entry.Value)}");
                 }
             }
-        }
-    }
-
-    public class StatusChangeEventArgs
-    {
-        public string Key { get; private set; }
-        public object OldValue { get; private set; }
-        public string OldValueString { get; private set; }
-        public object NewValue { get; private set; }
-        public string NewValueString { get; private set; }
-
-        public StatusChangeEventArgs(string key, object oldValue, object newValue)
-        {
-            this.Key = key;
-            this.OldValue = oldValue;
-            this.OldValueString = StatusLogger.FormatValue(oldValue);
-            this.NewValue = newValue;
-            this.NewValueString = StatusLogger.FormatValue(newValue);
         }
     }
 }
