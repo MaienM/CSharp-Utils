@@ -1,4 +1,4 @@
-﻿namespace Abelan.GUI
+﻿namespace CSharpUtils.GUI
 {
     partial class StatusDisplay
     {

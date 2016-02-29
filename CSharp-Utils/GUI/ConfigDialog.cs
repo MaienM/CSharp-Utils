@@ -51,23 +51,23 @@ namespace CSharpUtils.GUI
 
         protected ConfigDialog(T settings)
         {
-            this._settings = settings;
+            _settings = settings;
 
             // Setup the form.
-            this.AutoSize = true;
-            this.MinimumSize = new Size(500, 500);
-            this.Text = "Settings";
+            AutoSize = true;
+            MinimumSize = new Size(500, 500);
+            Text = "Settings";
 
             // Create the main panel.
-            this._panel = new TableLayoutPanel
+            _panel = new TableLayoutPanel
             {
                 AutoSize = true,
                 ColumnCount = 1,
                 Dock = DockStyle.Fill,
                 RowCount = 0
             };
-            this._panel.ColumnStyles.Add(new ColumnStyle());
-            this.Controls.Add(this._panel);
+            _panel.ColumnStyles.Add(new ColumnStyle());
+            Controls.Add(_panel);
 
             // Create the button panel.
             Button buttonSave = new Button
@@ -77,11 +77,11 @@ namespace CSharpUtils.GUI
             };
             buttonSave.Click += (sender, e) =>
             {
-                if (!this.SaveSettings())
+                if (!SaveSettings())
                 {
                     return;
                 }
-                this.Close();
+                Close();
             };
             Button buttonCancel = new Button
             {
@@ -90,7 +90,7 @@ namespace CSharpUtils.GUI
             };
             buttonCancel.Click += (sender, e) =>
             {
-                this.Close();
+                Close();
             };
             FlowLayoutPanel panelButton = new FlowLayoutPanel
             {
@@ -100,12 +100,12 @@ namespace CSharpUtils.GUI
             };
             panelButton.Controls.Add(buttonSave);
             panelButton.Controls.Add(buttonCancel);
-            this.Controls.Add(panelButton);
+            Controls.Add(panelButton);
 
             // Some default event handlers.
-            this.Shown += this.ShownLoadSetttings;
-            this.PreviewSaving += this.PreviewSavingServicesRestart;
-            this.Saved += this.SavedServicesRestart;
+            Shown += ShownLoadSetttings;
+            PreviewSaving += PreviewSavingServicesRestart;
+            Saved += SavedServicesRestart;
         }
 
         /// <summary>
@@ -115,13 +115,13 @@ namespace CSharpUtils.GUI
 
         private void PreviewSavingServicesRestart(object sender, CancelEventArgs e)
         {
-            if (this.Services == null)
+            if (Services == null)
             {
                 return;
             }
 
-            this.Saved -= this.SavedServicesRestart;
-            if (this.Services.GetStatuses().Values.Any(s => s == ServiceControllerStatus.Running))
+            Saved -= SavedServicesRestart;
+            if (Services.GetStatuses().Values.Any(s => s == ServiceControllerStatus.Running))
             {
                 // Prompt to confirm saving/restarting.
                 DialogResult dialogResult = MessageBox.Show(
@@ -135,28 +135,28 @@ namespace CSharpUtils.GUI
                 }
                 else
                 {
-                    this.Saved += this.SavedServicesRestart;
+                    Saved += SavedServicesRestart;
                 }
             }
         }
 
         private void SavedServicesRestart(object sender, EventArgs e)
         {
-            if (this.Services == null)
+            if (Services == null)
             {
                 return;
             }
 
             // Restart only running services.
             ServicesCollection runningServices = new ServicesCollection();
-            runningServices.AddRange(from entry in this.Services.GetStatuses() where entry.Value == ServiceControllerStatus.Running select entry.Key);
+            runningServices.AddRange(from entry in Services.GetStatuses() where entry.Value == ServiceControllerStatus.Running select entry.Key);
             runningServices.InvokeRestart();
         }
 
         private void ShownLoadSetttings(object sender, EventArgs e)
         {
             // Automatically load the settings when the form is shown.
-            this.LoadSettings();
+            LoadSettings();
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace CSharpUtils.GUI
                 ImageAlign = ContentAlignment.MiddleCenter,
                 MinimumSize = logo.Size + new Size(0, 20)
             };
-            this.Controls.Add(headerLabel);
+            Controls.Add(headerLabel);
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace CSharpUtils.GUI
         /// <returns>The new group</returns>
         protected ConfigDialogGroup AddGroup(string name)
         {
-            if (this._groups.ContainsKey(name))
+            if (_groups.ContainsKey(name))
             {
                 throw new ArgumentException($"Group name already in use: {name}", nameof(name));
             }
@@ -192,10 +192,10 @@ namespace CSharpUtils.GUI
             group.Text = name;
 
             // Store the group
-            this._panel.RowCount += 1;
-            this._panel.RowStyles.Add(new RowStyle());
-            this._panel.Controls.Add(group, 0, this._panel.RowCount - 1);
-            this._groups.Add(name, group);
+            _panel.RowCount += 1;
+            _panel.RowStyles.Add(new RowStyle());
+            _panel.Controls.Add(group, 0, _panel.RowCount - 1);
+            _groups.Add(name, group);
 
             return group;
         }
@@ -212,7 +212,7 @@ namespace CSharpUtils.GUI
             {
                 throw new KeyNotFoundException($"Unknown property {propertyName}");
             }
-            this._settingsMap.Add(propertyName, control);
+            _settingsMap.Add(propertyName, control);
         }
 
         /// <summary>
@@ -241,17 +241,17 @@ namespace CSharpUtils.GUI
         {
             // Load the settings into the ui.
             Type type = typeof (T);
-            foreach (KeyValuePair<string, Control> entry in this._settingsMap)
+            foreach (KeyValuePair<string, Control> entry in _settingsMap)
             {
                 PropertyInfo settingsPropertyInfo = type.GetProperty(entry.Key);
                 PropertyInfo controlPropertyInfo = GetPropertyForControl(entry.Value);
                 controlPropertyInfo.SetValue(entry.Value,
-                    Convert.ChangeType(settingsPropertyInfo.GetValue(this._settings), controlPropertyInfo.PropertyType));
+                    Convert.ChangeType(settingsPropertyInfo.GetValue(_settings), controlPropertyInfo.PropertyType));
             }
 
             // Fire the events.
-            this.Loading(this, new EventArgs());
-            this.Loaded(this, new EventArgs());
+            Loading(this, new EventArgs());
+            Loaded(this, new EventArgs());
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace CSharpUtils.GUI
         {
             // Check whether the save should continue.
             CancelEventArgs e = new CancelEventArgs();
-            this.PreviewSaving(this, e);
+            PreviewSaving(this, e);
             if (e.Cancel)
             {
                 return false;
@@ -269,18 +269,18 @@ namespace CSharpUtils.GUI
 
             // Set the properties.
             Type type = typeof (T);
-            foreach (KeyValuePair<string, Control> entry in this._settingsMap)
+            foreach (KeyValuePair<string, Control> entry in _settingsMap)
             {
                 PropertyInfo settingsPropertyInfo = type.GetProperty(entry.Key);
                 PropertyInfo controlPropertyInfo = GetPropertyForControl(entry.Value);
-                settingsPropertyInfo.SetValue(this._settings,
+                settingsPropertyInfo.SetValue(_settings,
                     Convert.ChangeType(controlPropertyInfo.GetValue(entry.Value), settingsPropertyInfo.PropertyType));
             }
-            this.Saving(this, new EventArgs());
+            Saving(this, new EventArgs());
 
             // Save the config.
-            type.GetMethod("Save").Invoke(this._settings, new object[0]);
-            this.Saved(this, new EventArgs());
+            type.GetMethod("Save").Invoke(_settings, new object[0]);
+            Saved(this, new EventArgs());
 
             return true;
         }

@@ -18,12 +18,12 @@ namespace CSharpUtils.Utils.StatusLogger
 
         public StatusChangeEventArgs(string key, object oldValue, object newValue)
         {
-            this.Timestamp = new DateTime();
-            this.Key = key;
-            this.OldValue = oldValue;
-            this.OldValueString = LocalStatusLogger.FormatValue(oldValue);
-            this.NewValue = newValue;
-            this.NewValueString = LocalStatusLogger.FormatValue(newValue);
+            Timestamp = new DateTime();
+            Key = key;
+            OldValue = oldValue;
+            OldValueString = LocalStatusLogger.FormatValue(oldValue);
+            NewValue = newValue;
+            NewValueString = LocalStatusLogger.FormatValue(newValue);
         }
     }
 }

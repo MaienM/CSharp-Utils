@@ -15,48 +15,48 @@ namespace CSharpUtils.Utils.StatusLogger
             return instance ?? (instance = new LocalStatusLogger());
         }
 
-        public void SetStatus(string key, bool value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, bool? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, short value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, short? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, int value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, int? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, uint value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, uint? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, long value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, long? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, ulong value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, ulong? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, double value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, double? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, float value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, float? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, string value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, char value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, char? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, char[] value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, byte value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, byte? value) { this.InnerSetStatus(key, value); }
-        public void SetStatus(string key, byte[] value) { this.InnerSetStatus(key, value); }
+        public void SetStatus(string key, bool value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, bool? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, short value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, short? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, int value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, int? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, uint value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, uint? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, long value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, long? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, ulong value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, ulong? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, double value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, double? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, float value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, float? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, string value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, char value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, char? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, char[] value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, byte value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, byte? value) { InnerSetStatus(key, value); }
+        public void SetStatus(string key, byte[] value) { InnerSetStatus(key, value); }
 
         private void InnerSetStatus(string fullKey, object value)
         {
             // Get the group and key.
             string key;
             Dictionary<string, object> group;
-            this.GetGroupAndKey(fullKey, out group, out key);
+            GetGroupAndKey(fullKey, out group, out key);
 
             // Log the data change.
             if (group.ContainsKey(key))
             {
                 if (FormatValue(group[key]) != FormatValue(value))
                 {
-                    this.Changed(this, new StatusChangeEventArgs(fullKey, group[key], value));
+                    Changed(this, new StatusChangeEventArgs(fullKey, group[key], value));
                 }
             }
             else
             {
-                this.Changed(this, new StatusChangeEventArgs(fullKey, null, value));
+                Changed(this, new StatusChangeEventArgs(fullKey, null, value));
             }
 
             // Set the value.
@@ -69,7 +69,7 @@ namespace CSharpUtils.Utils.StatusLogger
             string[] parts = key.Split('.');
 
             // Find/create the group.
-            group = this._data;
+            group = _data;
             for (int i = 0; i < parts.Length - 1; i++)
             {
                 if (group == null)
@@ -99,7 +99,7 @@ namespace CSharpUtils.Utils.StatusLogger
 
         public void Dump()
         {
-            this.Dump("", this._data);
+            Dump("", _data);
         }
 
         private void Dump(string key, Dictionary<string, object> data)
@@ -109,7 +109,7 @@ namespace CSharpUtils.Utils.StatusLogger
                 Dictionary<string, object> value = entry.Value as Dictionary<string, object>;
                 if (value != null)
                 {
-                    this.Dump($"{key}.{entry.Key}", value);
+                    Dump($"{key}.{entry.Key}", value);
                 }
                 else
                 {

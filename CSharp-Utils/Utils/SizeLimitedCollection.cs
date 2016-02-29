@@ -7,14 +7,31 @@ namespace CSharpUtils.Utils
     {
         public int Limit { get; set; }
 
+        public SizeLimitedCollection(int limit) : base()
+        {
+            Limit = limit;
+            Fit();
+        }
         public SizeLimitedCollection(int limit, IList<T> list) : base(list)
         {
-            this.Limit = limit;
+            Limit = limit;
+            Fit();
+        }
 
-            // Make sure the current list fits in the limit.
-            while (this.Count > this.Limit)
+        public new void Add(T item)
+        {
+            base.Add(item);
+            Fit();
+        }
+
+        /// <summary>
+        /// Make the collection fit.
+        /// </summary>
+        private void Fit()
+        {
+            while (Count > Limit)
             {
-                this.RemoveAt(0);
+                RemoveAt(0);
             }
         }
     }

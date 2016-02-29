@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using CSharpUtils.Utils.StatusLogger;
 
-namespace Abelan.GUI
+namespace CSharpUtils.GUI
 {
     public partial class StatusDisplay : Form
     {
-        private BaseStatusLogger _logger;
-
         private readonly Dictionary<string, TreeNode> _nodes = new Dictionary<string, TreeNode>();
 
         public StatusDisplay(BaseStatusLogger logger)
         {
             InitializeComponent();
 
-            this._logger = logger;
             logger.Changed += OnChanged;
         }
 
@@ -33,10 +29,10 @@ namespace Abelan.GUI
             string[] parts = e.Key.Split('.');
 
             TreeNode rootNode = null;
-            Dictionary<string, TreeNode> nodes = this._nodes;
+            Dictionary<string, TreeNode> nodes = _nodes;
             foreach (string part in parts)
             {
-                if (!nodes.ContainsKey(part))
+                if (nodes != null && !nodes.ContainsKey(part))
                 {
                     // Create child node.
                     TreeNode node = new TreeNode
@@ -59,8 +55,8 @@ namespace Abelan.GUI
                 }
 
                 // Get new root node.
-                rootNode = nodes[part];
-                nodes = rootNode.Tag as Dictionary<string, TreeNode>;
+                rootNode = nodes?[part];
+                nodes = rootNode?.Tag as Dictionary<string, TreeNode>;
             }
 
             // Update and show the final node.

@@ -10,7 +10,7 @@ namespace CSharpUtils.Utils.StatusLogger
         public StatusLoggerWriter(LocalStatusLogger logger, string path)
         {
             Path = path;
-            logger.Changed += this.OnChanged;
+            logger.Changed += OnChanged;
         }
 
         /// <summary>

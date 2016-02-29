@@ -30,11 +30,11 @@ namespace CSharpUtils.Utils
         {
             if (Environment.UserInteractive)
             {
-                this.Simulate();
+                Simulate();
             }
             else
             {
-                this.Run();
+                Run();
             }
         }
 
@@ -44,7 +44,7 @@ namespace CSharpUtils.Utils
         private void SimulateStart()
         {
             // Call OnStart method.
-            foreach (ServiceBase service in this.StartOrder)
+            foreach (ServiceBase service in StartOrder)
             {
                 Console.WriteLine("Starting service {0}", service.ServiceName);
                 service.GetType().GetMethod("OnStart", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(service, new object[] { new string[0] });
@@ -57,7 +57,7 @@ namespace CSharpUtils.Utils
         private void SimulateStop()
         { 
             // Call OnStop method.
-            foreach (ServiceBase service in this.StopOrder)
+            foreach (ServiceBase service in StopOrder)
             {
                 Console.WriteLine("Stopping service {0}", service.ServiceName);
                 service.GetType().GetMethod("OnStop", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(service, new object[0]);
@@ -71,10 +71,10 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void Simulate()
         {
-            this.SimulateStart();
+            SimulateStart();
             Console.WriteLine("Press any key to stop program");
             Console.Read();
-            this.SimulateStop();
+            SimulateStop();
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void Run()
         {
-            ServiceBase.Run(this.ToArray());
+            ServiceBase.Run(ToArray());
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void InvokeStart()
         {
-            foreach (ServiceBase service in this.StartOrder)
+            foreach (ServiceBase service in StartOrder)
             {
                 try
                 {
@@ -170,7 +170,7 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void InvokeStop()
         {
-            foreach (ServiceBase service in this.StopOrder)
+            foreach (ServiceBase service in StopOrder)
             {
                 try
                 {
@@ -197,7 +197,7 @@ namespace CSharpUtils.Utils
             // Check whether all services are running.
             try
             {
-                this.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMilliseconds(TIMEOUT));
+                WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMilliseconds(TIMEOUT));
             }
             catch (MultiException e)
             {
@@ -206,12 +206,12 @@ namespace CSharpUtils.Utils
             }
 
             // Stop all services.
-            this.InvokeStop();
+            InvokeStop();
 
             // Check whether all services are stopped.
             try
             {
-                this.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMilliseconds(TIMEOUT));
+                WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMilliseconds(TIMEOUT));
             }
             catch (MultiException e)
             {
@@ -220,7 +220,7 @@ namespace CSharpUtils.Utils
             }
 
             // Start all services.
-            this.InvokeStart();
+            InvokeStart();
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void Install()
         {
-            this.DoInstall(false);
+            DoInstall(false);
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void Uninstall()
         {
-            this.DoInstall(true);
+            DoInstall(true);
         }
 
         /// <summary>
@@ -244,8 +244,8 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void Reinstall()
         {
-            this.Uninstall();
-            this.Install();
+            Uninstall();
+            Install();
         }
 
         private void DoInstall(bool undo)
@@ -299,8 +299,8 @@ namespace CSharpUtils.Utils
 
             public ServiceException(ServiceBase service, Exception innerException)
             {
-                this.Service = service;
-                this.InnerException = innerException;
+                Service = service;
+                InnerException = innerException;
             }
         }
 
@@ -319,8 +319,8 @@ namespace CSharpUtils.Utils
             public MultiException(IEnumerable<ServiceBase> services, string message, Type innerType)
                 : base(message)
             {
-                this.Services = services;
-                this.InnerType = innerType;
+                Services = services;
+                InnerType = innerType;
             }
         }
     }

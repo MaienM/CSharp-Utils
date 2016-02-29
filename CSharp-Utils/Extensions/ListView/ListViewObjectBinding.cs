@@ -119,14 +119,14 @@ namespace CSharpUtils.Extensions.ListViewExtensions
                 // Check if the item exists in the subitem list.
                 // If it does, move it.
                 // If not, create one.
-                System.Windows.Forms.ListViewItem.ListViewSubItem subItem = item.SubItems[header.Name];
+                ListViewItem.ListViewSubItem subItem = item.SubItems[header.Name];
                 if (subItem != null)
                 {
                     item.SubItems.Remove(subItem);
                 }
                 else
                 {
-                    subItem = new System.Windows.Forms.ListViewItem.ListViewSubItem(item, "");
+                    subItem = new ListViewItem.ListViewSubItem(item, "");
                     subItem.Name = header.Name;
                 }
                 item.SubItems.Insert(index++, subItem);

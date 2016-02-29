@@ -26,7 +26,7 @@ namespace CSharpUtils.Utils
 
         public ExceptionDumper(Exception e)
         {
-            this.exception = e;
+            exception = e;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void Dump(string key, object value)
         {
-            this.data.Add(key, value);
+            data.Add(key, value);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace CSharpUtils.Utils
             {
                 value = "Unable to read file";
             }
-            this.Dump(key, value);
+            Dump(key, value);
         }
 
         public string Format()
@@ -62,7 +62,7 @@ namespace CSharpUtils.Utils
             using (StringWriter writer = new StringWriter())
             {
                 writer.WriteLine("===== Exception =====");
-                writer.WriteLine(this.exception.ToString());
+                writer.WriteLine(exception.ToString());
                 writer.WriteLine();
                 writer.WriteLine("===== Dump =====");
                 foreach (KeyValuePair<string, object> data in this.data)

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using CSharpUtils.Utils;
 
@@ -13,7 +10,7 @@ namespace CSharpUtils.GUI
 {
     partial class ConfigDialog<T>
     {
-        protected class ConfigDialogGroup : GroupBox
+        protected sealed class ConfigDialogGroup : GroupBox
         {
             private readonly ConfigDialog<T> _dialog;
             private readonly TableLayoutPanel _panel;
@@ -21,23 +18,23 @@ namespace CSharpUtils.GUI
             public ConfigDialogGroup(ConfigDialog<T> dialog)
             {
                 // Store the parent dialog.
-                this._dialog = dialog;
+                _dialog = dialog;
 
                 // Set the groupbox properties.
-                this.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-                this.AutoSize = true;
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                AutoSize = true;
 
                 // Create the inner panel.
-                this._panel = new TableLayoutPanel
+                _panel = new TableLayoutPanel
                 {
                     AutoSize = true,
                     ColumnCount = 2,
                     Dock = DockStyle.Fill,
                     RowCount = 0
                 };
-                this._panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
-                this._panel.ColumnStyles.Add(new ColumnStyle());
-                this.Controls.Add(this._panel);
+                _panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+                _panel.ColumnStyles.Add(new ColumnStyle());
+                Controls.Add(_panel);
             }
 
             #region Adding settings
@@ -52,10 +49,10 @@ namespace CSharpUtils.GUI
             {
                 // Create and register the control.
                 CheckBox control = new CheckBox();
-                this._dialog.AddProperty(name, control);
+                _dialog.AddProperty(name, control);
 
                 // Setup the control.
-                this.AddControl(label, control);
+                AddControl(label, control);
 
                 return control;
             }
@@ -74,10 +71,10 @@ namespace CSharpUtils.GUI
                     Minimum = decimal.MinValue,
                     Maximum = decimal.MaxValue
                 };
-                this._dialog.AddProperty(name, control);
+                _dialog.AddProperty(name, control);
 
                 // Setup the control.
-                this.AddControl(label, control);
+                AddControl(label, control);
 
                 return control;
             }
@@ -92,10 +89,10 @@ namespace CSharpUtils.GUI
             {
                 // Create and register the control.
                 TextBox control = new TextBox();
-                this._dialog.AddProperty(name, control);
+                _dialog.AddProperty(name, control);
 
                 // Setup the control.
-                this.AddControl(label, control);
+                AddControl(label, control);
 
                 return control;
             }
@@ -111,7 +108,7 @@ namespace CSharpUtils.GUI
             {
                 // Create and register the main control.
                 TextBox control = new TextBox { Dock = DockStyle.Fill };
-                this._dialog.AddProperty(name, control);
+                _dialog.AddProperty(name, control);
 
                 // Create the button.
                 Label iconControl = new Label
@@ -126,7 +123,7 @@ namespace CSharpUtils.GUI
                 User32.SendMessage(control.Handle, 0xd3, (IntPtr)2, (IntPtr)(iconControl.Width << 16));
 
                 // Setup the control.
-                this.AddControl(label, control);
+                AddControl(label, control);
 
                 return new Tuple<TextBox, Label>(control, iconControl);
             }
@@ -139,7 +136,7 @@ namespace CSharpUtils.GUI
             /// <returns>The controls for the property</returns>
             public Tuple<TextBox, Label, FolderBrowserDialog> AddFolderPicker(string name, string label)
             {
-                Tuple<TextBox, Label> controls = this.AddTextWithIcon(name, label, Resources.folder);
+                Tuple<TextBox, Label> controls = AddTextWithIcon(name, label, Resources.folder);
 
                 // Create the folder browser.
                 FolderBrowserDialog browser = new FolderBrowserDialog();
@@ -166,7 +163,7 @@ namespace CSharpUtils.GUI
             /// <returns>The controls for the property</returns>
             public Tuple<TextBox, Label, FileDialog> AddFilePicker(string name, string label, bool create)
             {
-                Tuple<TextBox, Label> controls = this.AddTextWithIcon(name, label, create ? Resources.save : Resources.file);
+                Tuple<TextBox, Label> controls = AddTextWithIcon(name, label, create ? Resources.save : Resources.file);
 
                 // Create the file browser.
                 FileDialog browser = create ? (FileDialog)new SaveFileDialog() : new OpenFileDialog();
@@ -191,7 +188,7 @@ namespace CSharpUtils.GUI
             /// <param name="dataSet">The dataset to control</param>
             /// <param name="label">The label of the property</param>
             /// <returns>The control for the property</returns>
-            public DataGridView AddDataGridView<D>(DbContext context, DbSet<D> dataSet, string label) where D : class
+            public DataGridView AddDataGridView<TD>(DbContext context, DbSet<TD> dataSet, string label) where TD : class
             {
                 // Create the main control.
                 DataGridView control = new DataGridView
@@ -202,10 +199,10 @@ namespace CSharpUtils.GUI
                 };
 
                 // On loading, setup the control with the dataset.
-                this._dialog.Loading += (sender, args) =>
+                _dialog.Loading += (sender, args) =>
                 {
                     // Create the binding list for the data.
-                    BindingList<D> data = new BindingList<D>(dataSet.ToList());
+                    BindingList<TD> data = new BindingList<TD>(dataSet.ToList());
 
                     // Setup the gridview with the binding list.
                     control.DataSource = data;
@@ -222,13 +219,13 @@ namespace CSharpUtils.GUI
                 };
                 
                 // On saving, save the context associated with the dataset.
-                this._dialog.Saving += (sender, args) =>
+                _dialog.Saving += (sender, args) =>
                 {
                     context.SaveChanges();
                 };
 
                 // Setup the control.
-                this.AddControl(label, control);
+                AddControl(label, control);
 
                 return control;
             }
@@ -242,10 +239,10 @@ namespace CSharpUtils.GUI
             public void AddControl(Control control)
             {
                 control.Dock = DockStyle.Fill;
-                this._panel.RowCount += 1;
-                this._panel.RowStyles.Add(new RowStyle());
-                this._panel.Controls.Add(control, 0, this._panel.RowCount - 1);
-                this._panel.SetColumnSpan(control, 2);
+                _panel.RowCount += 1;
+                _panel.RowStyles.Add(new RowStyle());
+                _panel.Controls.Add(control, 0, _panel.RowCount - 1);
+                _panel.SetColumnSpan(control, 2);
             }
 
             /// <summary>
@@ -267,10 +264,10 @@ namespace CSharpUtils.GUI
                 };
 
                 // Add the elements to the groupbox.
-                this._panel.RowCount += 1;
-                this._panel.RowStyles.Add(new RowStyle());
-                this._panel.Controls.Add(labelControl, 0, this._panel.RowCount - 1);
-                this._panel.Controls.Add(control, 1, this._panel.RowCount - 1);
+                _panel.RowCount += 1;
+                _panel.RowStyles.Add(new RowStyle());
+                _panel.Controls.Add(labelControl, 0, _panel.RowCount - 1);
+                _panel.Controls.Add(control, 1, _panel.RowCount - 1);
             }
         }
     }
