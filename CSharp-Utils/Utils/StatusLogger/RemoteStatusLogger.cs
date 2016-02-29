@@ -1,10 +1,12 @@
-﻿namespace CSharpUtils.Utils.StatusLogger
+﻿using CSharpUtils.StatusLoggerServiceReference;
+
+namespace CSharpUtils.Utils.StatusLogger
 {
-    public class RemoteStatusLogger : BaseStatusLogger, IStatusLoggerCallback
+    public class RemoteStatusLogger : BaseStatusLogger, IStatusLoggerServiceCallback
     {
-        public void OnChanged(StatusChangeEventArgs e)
+        public void OnChanged(StatusLoggerServiceReference.StatusChangeEventArgs e)
         {
-            Changed(this, e);
+            Changed(this, StatusChangeEventArgs.FromService(e));
         }
     }
 }

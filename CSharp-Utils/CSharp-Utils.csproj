@@ -88,6 +88,11 @@
     <Compile Include="GUI\ConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Service References\StatusLoggerServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Utils\CustomSettingsProvider.cs" />
     <Compile Include="Utils\ExceptionDumper.cs" />
     <Compile Include="Utils\ServicesManager.cs" />
@@ -110,6 +115,16 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Service References\StatusLoggerServiceReference\CSharpUtils.Utils.StatusLogger.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\StatusLoggerServiceReference\service.wsdl" />
+    <None Include="Service References\StatusLoggerServiceReference\service.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\StatusLoggerServiceReference\service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUI\StatusDisplay.resx">
@@ -137,6 +152,21 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\StatusLoggerServiceReference\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\StatusLoggerServiceReference\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\StatusLoggerServiceReference\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\StatusLoggerServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

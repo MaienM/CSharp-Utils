@@ -3,7 +3,7 @@ using System.ServiceModel;
 
 namespace CSharpUtils.Utils.StatusLogger
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class StatusLoggerService : IStatusLoggerService
     {
         private readonly Collection<StatusChangeEventArgs> _log = new SizeLimitedCollection<StatusChangeEventArgs>(1000);

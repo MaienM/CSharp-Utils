@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace CSharpUtils.Utils.StatusLogger
 {
@@ -16,6 +17,8 @@ namespace CSharpUtils.Utils.StatusLogger
         public object NewValue { get; private set; }
         public string NewValueString { get; private set; }
 
+        private StatusChangeEventArgs() {}
+
         public StatusChangeEventArgs(string key, object oldValue, object newValue)
         {
             Timestamp = new DateTime();
@@ -24,6 +27,19 @@ namespace CSharpUtils.Utils.StatusLogger
             OldValueString = LocalStatusLogger.FormatValue(oldValue);
             NewValue = newValue;
             NewValueString = LocalStatusLogger.FormatValue(newValue);
+        }
+
+        public static StatusChangeEventArgs FromService(StatusLoggerServiceReference.StatusChangeEventArgs e)
+        {
+            return new StatusChangeEventArgs()
+            {
+                Timestamp = e.Timestamp,
+                Key = e.Key,
+                OldValue = e.OldValue,
+                OldValueString = e.OldValueString,
+                NewValue = e.NewValue,
+                NewValueString = e.NewValueString
+            };
         }
     }
 }
