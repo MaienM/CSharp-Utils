@@ -1,0 +1,158 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Linq"#>
+<#@ assembly name="System.Xml"#>
+<#@ assembly name="System.Xml.Linq"#>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<##>
+using CSharpUtils.Structs;
+using CSharpUtils.Utils.StatusLogger;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+namespace <#= System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint") #>
+{
+<#
+	XDocument doc = XDocument.Load(((ITextTemplatingSessionHost) Host).Session["InputFileName"].ToString());
+	foreach (XElement dbNode in doc.Elements("datablocks").Descendants("datablock")) {
+#>
+	[StructLayout(LayoutKind.Explicit, Size = <#= dbNode.Attribute("size").Value #>)]
+	public class <#= dbNode.Attribute("name").Value #> {
+<#		foreach (XElement structNode in dbNode.Descendants("struct")) { #>
+		[StructLayout(LayoutKind.Explicit, Size = <#= structNode.Attribute("size").Value #>)]
+		public struct <#= structNode.Attribute("name").Value #>_STRUCT {
+			#region bytes
+<#			for (int location = 0; location < int.Parse(structNode.Attribute("size").Value); location++) { #>
+			[FieldOffset(<#= location #>)] private byte byte<#= location #>;
+<#			} #>
+			#endregion
+
+<#			foreach (XElement propertyNode in structNode.Descendants("property").ToList<XElement>()) { #>
+			/// <summary>
+			/// <#= propertyNode.Attribute("description").Value #>
+			/// </summary>
+<#
+				String name = propertyNode.Attribute("name").Value;
+				int byte_ = int.Parse(propertyNode.Attribute("byte").Value);
+				int bit = 0;
+				if (propertyNode.Attribute("bit") != null) {
+					bit = int.Parse(propertyNode.Attribute("bit").Value);
+				}
+
+				switch (propertyNode.Attribute("type").Value) {
+					case "BOOL":
+#>
+			public bool <#= name #> {
+				get	{
+					return StructUtils.GetBitAsBool(byte<#= byte_ #>, <#= bit #>);
+				}
+				set	{
+					byte<#= byte_ #> = StructUtils.SetBitAsBool(byte<#= byte_ #>, <#= bit #>, value);
+				}
+			}
+<#
+					break; 
+					case "DINT": 
+#>
+			public int <#= propertyNode.Attribute("name").Value #> {
+				get {
+					return BitConverter.ToInt32(new byte[] { byte<#= byte_ #>, byte<#= byte_ + 1#>, byte<#= byte_ + 2 #>, byte<#= byte_ + 3 #> }, 0);
+				} 
+				set {
+					byte[] bytes = BitConverter.GetBytes(value);
+					byte<#= byte_ #> = bytes[0];
+					byte<#= byte_ + 1 #> = bytes[1];
+					byte<#= byte_ + 2 #> = bytes[2];
+					byte<#= byte_ + 3 #> = bytes[3];
+				}
+			}
+
+<#
+					break;
+					case "INT": 
+#>
+			public short <#= propertyNode.Attribute("name").Value #> {
+				get {
+					return BitConverter.ToInt16(new byte[] { byte<#= byte_ #>, byte<#= byte_ + 1#> }, 0);
+				} 
+				set {
+					byte[] bytes = BitConverter.GetBytes(value);
+					byte<#= byte_ #> = bytes[0];
+					byte<#= byte_ + 1 #> = bytes[1];
+				}
+			}
+
+<#
+					break;
+				}
+			}
+#>
+		}
+
+		[FieldOffset(<#= structNode.Attribute("start").Value #>)]
+		public <#= structNode.Attribute("name").Value #>_STRUCT <#= structNode.Attribute("name").Value #> = new <#= structNode.Attribute("name").Value #>_STRUCT();
+
+<#		} #>
+
+		/// <summary>
+		/// Write the current state to the logger under the given name.
+		/// </summary>
+		public void Log(LocalStatusLogger logger, String name) {
+			Log(logger, name, new List<String>());
+		}
+
+		/// <summary>
+		/// Write the current state to the logger under the given name, excluding the given properties.
+		/// </summary>
+		public void Log(LocalStatusLogger logger, String name, params String[] ignore) {
+			Log(logger, name, new List<String>(ignore));
+		}
+		
+		/// <summary>
+		/// Write the current state to the logger under the given name, excluding the given properties.
+		/// </summary>
+		public void Log(LocalStatusLogger logger, String name, List<String> ignore) {
+<#
+		foreach (XElement structNode in dbNode.Descendants("struct")) {
+			foreach (XElement propertyNode in structNode.Descendants("property").ToList<XElement>()) {
+				String name = structNode.Attribute("name").Value + "." + propertyNode.Attribute("name").Value;
+#>
+			if (!ignore.Contains("<#= name #>")) logger.SetStatus(name + ".<#= name #>", <#= name #>);
+<#
+			}
+		}
+#>
+		}
+		
+		/// <summary>
+		/// Create an instance from raw data.
+		/// </summary>
+		public static <#= dbNode.Attribute("name").Value #> Deserialize(byte[] data) {
+			return StructUtils.RawDeserialize<<#= dbNode.Attribute("name").Value #>>(data, 0);
+		}
+
+		/// <summary>
+		/// Get the raw data.
+		/// </summary>
+		public byte[] Serialize() {
+			return StructUtils.RawSerialize(this);
+		}
+		
+		/// <summary>
+		/// The size of the struct.
+		/// </summary>
+		public static int Size {
+			get {
+				return Marshal.SizeOf(typeof(<#= dbNode.Attribute("name").Value #>));
+			}
+		}
+	}
+<#
+	}
+#>
+}
