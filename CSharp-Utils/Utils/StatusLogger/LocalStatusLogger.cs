@@ -6,8 +6,10 @@ namespace CSharpUtils.Utils.StatusLogger
 {
     public class LocalStatusLogger : BaseStatusLogger
     {
+        static object UNSET = new object();
+
         private static LocalStatusLogger instance;
-        
+
         private readonly Dictionary<string, object> _data = new Dictionary<string, object>();
 
         public static LocalStatusLogger GetInstance()
@@ -15,6 +17,10 @@ namespace CSharpUtils.Utils.StatusLogger
             return instance ?? (instance = new LocalStatusLogger());
         }
 
+        public void ClearStatus(string key)
+        {
+            InnerSetStatus(key, UNSET);
+        }
         public void SetStatus(string key, bool value) { InnerSetStatus(key, value); }
         public void SetStatus(string key, bool? value) { InnerSetStatus(key, value); }
         public void SetStatus(string key, short value) { InnerSetStatus(key, value); }
@@ -56,11 +62,18 @@ namespace CSharpUtils.Utils.StatusLogger
             }
             else
             {
-                Changed(this, new StatusChangeEventArgs(fullKey, null, value));
+                Changed(this, new StatusChangeEventArgs(fullKey, UNSET, value));
             }
 
             // Set the value.
-            group[key] = value;
+            if (value == UNSET)
+            {
+                group.Remove(key);
+            }
+            else
+            {
+                group[key] = value;
+            }
         }
 
         private void GetGroupAndKey(string key, out Dictionary<string, object> group, out string remainingKey)

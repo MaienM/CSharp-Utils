@@ -90,6 +90,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Structs\StructUtils.cs" />
     <Compile Include="Utils\CustomSettingsProvider.cs" />
     <Compile Include="Utils\ExceptionDumper.cs" />
     <Compile Include="Utils\ServicesManager.cs" />
@@ -104,9 +105,12 @@
     <Compile Include="Utils\StatusLogger\StatusLoggerWriter.cs" />
     <Compile Include="Utils\TempWriter.cs" />
     <Compile Include="Utils\User32.cs" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Structs\Structs.tt" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
