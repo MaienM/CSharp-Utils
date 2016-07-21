@@ -1,8 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Data.Entity;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using CSharpUtils.Utils;
 
@@ -181,6 +178,7 @@ namespace CSharpUtils.GUI
                 return new Tuple<TextBox, Label, FileDialog>(controls.Item1, controls.Item2, browser);
             }
 
+            #if ENTITY_FRAMEWORK
             /// <summary>
             ///     Add a table-backed dataset to this group.
             /// </summary>
@@ -229,6 +227,7 @@ namespace CSharpUtils.GUI
 
                 return control;
             }
+            #endif
             // ReSharper enable UnusedMethodReturnValue.Global
             #endregion
 
