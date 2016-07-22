@@ -95,6 +95,25 @@ namespace CSharpUtils.GUI
             }
 
             /// <summary>
+            ///     Add a masked textual property to this group.
+            /// </summary>
+            /// <param name="name">The property to control</param>
+            /// <param name="label">The label of the property</param>
+            /// <param name="mask">The mask of the control</param>
+            /// <returns>The control for the property</returns>
+            public MaskedTextBox AddMaskedString(string name, string label, string mask)
+            {
+                // Create and register the control.
+                MaskedTextBox control = new MaskedTextBox(mask);
+                _dialog.AddProperty(name, control);
+
+                // Setup the control.
+                AddControl(label, control);
+
+                return control;
+            }
+
+            /// <summary>
             ///     Add a textual property, with a button, to this group.
             /// </summary>
             /// <param name="name">The property to control</param>
