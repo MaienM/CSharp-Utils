@@ -1,6 +1,10 @@
-﻿using System;
+﻿using CSharpUtils.GUI;
+using CSharpUtils.Utils.StatusLogger;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace CSharpUtils.Utils
 {
@@ -127,7 +131,12 @@ namespace CSharpUtils.Utils
         private void ActionSimulate(ServicesCollection services)
         {
             Console.WriteLine("Simulating service...");
-            services.Simulate();
+            services.Simulate(Task.Factory.StartNew(() =>
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new StatusDisplay(LocalStatusLogger.GetInstance()));
+            }));
         }
 
         private void ActionStart(ServicesCollection services)

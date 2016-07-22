@@ -71,9 +71,22 @@ namespace CSharpUtils.Utils
         /// </summary>
         public void Simulate()
         {
+            Simulate(Task.Factory.StartNew(() =>
+            {
+                Console.WriteLine("Press any key to stop program");
+                Console.Read();
+            }));
+        }
+
+        /// <summary>
+        /// Simulate running the services.
+        /// 
+        /// This invokes the OnStart method of all services, waits for the given task, and then invokes the OnStop method of all services.
+        /// </summary>
+        public void Simulate(Task waitOn)
+        {
             SimulateStart();
-            Console.WriteLine("Press any key to stop program");
-            Console.Read();
+            waitOn.Wait();
             SimulateStop();
         }
 
