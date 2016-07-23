@@ -43,6 +43,10 @@ namespace <#= System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Name
 				if (propertyNode.Attribute("bit") != null) {
 					bit = int.Parse(propertyNode.Attribute("bit").Value);
 				}
+				int size = 0;
+				if (propertyNode.Attribute("size") != null) {
+					size = int.Parse(propertyNode.Attribute("size").Value);
+				}
 
 				switch (propertyNode.Attribute("type").Value) {
 					case "BOOL":
@@ -65,13 +69,15 @@ namespace <#= System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Name
 				} 
 				set {
 					byte[] bytes = BitConverter.GetBytes(value);
+					if (BitConverter.IsLittleEndian) {
+						Array.Reverse(bytes); 
+					}
 					byte<#= byte_ #> = bytes[0];
 					byte<#= byte_ + 1 #> = bytes[1];
 					byte<#= byte_ + 2 #> = bytes[2];
 					byte<#= byte_ + 3 #> = bytes[3];
 				}
 			}
-
 <#
 					break;
 					case "INT": 
@@ -82,11 +88,49 @@ namespace <#= System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Name
 				} 
 				set {
 					byte[] bytes = BitConverter.GetBytes(value);
+					if (BitConverter.IsLittleEndian) {
+						Array.Reverse(bytes); 
+					}
 					byte<#= byte_ #> = bytes[0];
 					byte<#= byte_ + 1 #> = bytes[1];
 				}
 			}
-
+<#
+					break;
+					case "SHORT": 
+#>
+			public short <#= propertyNode.Attribute("name").Value #> {
+				get {
+					return Convert.ToInt16(byte<#= byte_ #>);
+				} 
+				set {
+					byte[] bytes = BitConverter.GetBytes(value);
+					if (BitConverter.IsLittleEndian) {
+						Array.Reverse(bytes); 
+					}
+					byte<#= byte_ #> = bytes[0];
+				}
+			}
+<#
+					break;
+					case "STRING": 
+#>
+			public string <#= propertyNode.Attribute("name").Value #> {
+				get {
+					String data = "";
+<#
+					for (int i = 0; i < size; i++) {
+#>
+					data += Convert.ToChar(byte<#= byte_ + i #>);
+<#
+					}
+#>
+					return data;
+				} 
+				set {
+					throw new NotImplementedException();
+				}
+			}
 <#
 					break;
 				}
