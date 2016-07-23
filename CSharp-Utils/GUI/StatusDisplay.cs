@@ -61,9 +61,16 @@ namespace CSharpUtils.GUI
 
             // Update and show the final node.
             if (rootNode == null) return;
-            rootNode.Text = $"{parts[parts.Length - 1]}: {e.NewValueString}";
-            rootNode.EnsureVisible();
-            rootNode.Expand();
+            if (e.NewValue == LocalStatusLogger.UNSET)
+            {
+                rootNode.Remove();
+            }
+            else
+            {
+                rootNode.Text = $"{parts[parts.Length - 1]}: {e.NewValueString}";
+                rootNode.EnsureVisible();
+                rootNode.Expand();
+            }
         }
     }
 }

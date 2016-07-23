@@ -6,7 +6,7 @@ namespace CSharpUtils.Utils.StatusLogger
 {
     public class LocalStatusLogger : BaseStatusLogger
     {
-        static object UNSET = new object();
+        public static object UNSET = new object();
 
         private static LocalStatusLogger instance;
 
