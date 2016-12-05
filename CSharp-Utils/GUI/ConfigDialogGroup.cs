@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Linq;
 using CSharpUtils.Utils;
+
+#if ENTITY_FRAMEWORK
+using System.Data.Entity;
+#endif
 
 namespace CSharpUtils.GUI
 {

@@ -158,6 +158,27 @@ namespace CSharpUtils.GUI
             // Automatically load the settings when the form is shown.
             LoadSettings();
         }
+        
+        /// <summary>
+        ///     Link a checkbox to a control, enabling the control only if the checkbox is checked.
+        /// </summary>
+        /// <param name="checkbox">The checkbox</param>
+        /// <param name="control">The controlled control</param>
+        protected void LinkCheckboxToControl(CheckBox checkbox, params Control[] controls)
+        {
+            // Event handler that updates all controls
+            EventHandler handler = (sender, args) =>
+            {
+                foreach (Control control in controls)
+                {
+                    control.Enabled = checkbox.Checked;
+                }
+            };
+
+            // Trigger the handler whenever the checkbox state changes, and when the settings are loaded
+            checkbox.CheckedChanged += (s, a) => handler(s, a);
+            Loaded += (s, a) => handler(s, a);
+        }
 
         /// <summary>
         ///     Add a header logo.
