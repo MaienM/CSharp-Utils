@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +14,11 @@ namespace CSharpUtils.Utils
     /// </summary>
     public class ExceptionDumper
     {
+        /// <summary>
+        /// The location where the files are stored.
+        /// </summary>
+        public static string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
         /// <summary>
         /// The exception.
         /// </summary>
@@ -80,10 +85,12 @@ namespace CSharpUtils.Utils
         /// <returns>The path of the log</returns>
         public string SaveToFile()
         {
+            Directory.CreateDirectory(directory);
             string filename = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                directory,
                 string.Format("ErrorReport {0}.log", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss fff"))
             );
+            File.WriteAllText(filename, Format());
             return filename;
         }
     }
