@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Linq;
 using CSharpUtils.Utils;
+using System.Collections.Generic;
 
 #if ENTITY_FRAMEWORK
 using System.Data.Entity;
@@ -74,6 +75,29 @@ namespace CSharpUtils.GUI
                     Minimum = decimal.MinValue,
                     Maximum = decimal.MaxValue
                 };
+                _dialog.AddProperty(name, control);
+
+                // Setup the control.
+                AddControl(label, control);
+
+                return control;
+            }
+
+            /// <summary>
+            ///     Add a dropdown box to this group.
+            /// </summary>
+            /// <param name="name"></param>
+            /// <param name="label"></param>
+            /// <param name="options"></param>
+            /// <returns></returns>
+            public ComboBox AddComboBox(string name, string label, List<string> options)
+            {
+                // Create and register the control
+                ComboBox control = new ComboBox();
+                foreach (string option in options)
+                {
+                    control.Items.Add(option);
+                }
                 _dialog.AddProperty(name, control);
 
                 // Setup the control.
