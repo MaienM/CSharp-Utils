@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CSharpUtils.MXIO
 {
-    public class MXIOEthernetConnection : MXIOConnection
+    public class MXIOE1KConnection : MXIOConnection
     {
         /// <summary>
         /// The IP address of the MXIO module.
@@ -26,7 +26,7 @@ namespace CSharpUtils.MXIO
         /// <param name="name">The name of the connection</param>
         /// <param name="ip">The IP address of the MXIO module</param>
         /// <param name="port">The port of the MXIO module</param>
-        public MXIOEthernetConnection(MXIOManager manager, string name, string ip, ushort port)
+        public MXIOE1KConnection(MXIOManager manager, string name, string ip, ushort port)
             : base(manager, name)
         {
             this.IP = ip;
@@ -52,10 +52,10 @@ namespace CSharpUtils.MXIO
 
             // Connect.
             int[] conn = new int[1];
-            ret = MXIO_CS.MXEIO_Connect(Encoding.UTF8.GetBytes(IP), Port, Manager.Timeout, conn);
+            ret = MXIO_CS.MXEIO_E1K_Connect(Encoding.UTF8.GetBytes(IP), Port, Manager.Timeout, conn, new byte[0]);
             if (ret != MXIO_CS.MXIO_OK)
             {
-                throw new MXIOException("ConnectMXIO failed: {0}.", ret);
+                throw new MXIOException("MXEIO_E1K_Connect failed: {0}.", ret);
             }
             this.connection = conn[0];
 
@@ -64,7 +64,7 @@ namespace CSharpUtils.MXIO
             ret = MXIO_CS.MXEIO_CheckConnection(connection, Manager.Timeout, bytCheckStatus);
             if (ret != MXIO_CS.MXIO_OK)
             {
-                throw new MXIOException("MXIO check connection failed: {0}.", ret);
+                throw new MXIOException("MXEIO_CheckConnection failed: {0}.", ret);
             }
             if (bytCheckStatus[0] != MXIO_CS.CHECK_CONNECTION_OK)
             {
@@ -81,13 +81,25 @@ namespace CSharpUtils.MXIO
                         msg = "unknown: " + bytCheckStatus[0];
                         break;
                 }
-                throw new MXIOException("MXIO check connection failed: {0}.", msg);
+                throw new MXIOException("MXEIO_CheckConnection status failed: {0}.", msg);
             }
         }
 
         public override void Close()
         {
             MXIO_CS.MXEIO_Disconnect(this.connection);
+        }
+
+        public override void SetDigitalOutput(int output, bool value)
+        {
+            InvokeWithRetry("SetDigitalOutput", () => MXIO_CS.E1K_DO_Writes(connection, (byte)output, 1, (uint)(value ? 1 : 0)));
+        }
+
+        public override bool GetDigitalInput(int input)
+        {
+            uint[] value = new uint[1];
+            InvokeWithRetry("GetDigitalInput", () => MXIO_CS.E1K_DI_Reads(connection, 1, (byte)input, value));
+            return value[0] == 1;
         }
     }
 }

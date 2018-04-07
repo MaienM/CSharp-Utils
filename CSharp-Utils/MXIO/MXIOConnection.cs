@@ -81,7 +81,7 @@ namespace CSharpUtils.MXIO
         /// </summary>
         abstract public void Close();
 
-        private void InvokeWithRetry(string methodName, Func<int> method)
+        protected void InvokeWithRetry(string methodName, Func<int> method)
         {
             int attempt = 0;
             while (true)
@@ -95,22 +95,15 @@ namespace CSharpUtils.MXIO
                 attempt++;
                 if (attempt < Manager.Retries)
                 {
-                    Manager.Logger.Log(LogLevel.DEBUG, "{} failed ({}) on module {}, re-trying ({}/{})", methodName, MXIOException.GetErrorMessage(ret), Name, attempt, Manager.Retries);
+                    Manager.Logger.Log(LogLevel.DEBUG, "{0} failed ({1}) on module {2}, re-trying ({3}/{4})", methodName, MXIOException.GetErrorMessage(ret), Name, attempt, Manager.Retries);
                     Thread.Sleep(Manager.RetryDelay);
                     Open();
                 }
                 else
                 {
-                    throw new MXIOException("{} failed on {}: {}", methodName, Name, MXIOException.GetErrorMessage(ret));
+                    throw new MXIOException("{0} failed on {1}: {2}", methodName, Name, MXIOException.GetErrorMessage(ret));
                 }
             }
-        }
-        /// <summary>
-        /// Reset the MXIO module.
-        /// </summary>
-        public void Reset()
-        {
-            InvokeWithRetry("Reset", () => MXIO_CS.MXIO_Reset(connection));
         }
 
         /// <summary>
@@ -118,21 +111,13 @@ namespace CSharpUtils.MXIO
         /// </summary>
         /// <param name="output">The number of the output to set</param>
         /// <param name="status">The state to set it to</param>
-        public void SetDigitalOutput(int output, bool value)
-        {
-            InvokeWithRetry("SetOutput", () => MXIO_CS.DO_Write(connection, 1, (byte)output, (byte)(value ? 1 : 0)));
-        }
+        public abstract void SetDigitalOutput(int output, bool value);
 
         /// <summary>
         /// Get an input of the MXIO module.
         /// </summary>
         /// <param name="input">The number of the input to get</param>
-        private bool GetDigitalInput(int input)
-        {
-            byte[] value = new byte[1];
-            InvokeWithRetry("GetInput", () => MXIO_CS.DI_Read(connection, 1, (byte)input, value));
-            return value[0] == 1;
-        }
+        public abstract bool GetDigitalInput(int input);
     }
 }
 

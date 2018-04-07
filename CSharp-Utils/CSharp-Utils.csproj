@@ -79,9 +79,8 @@
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="Logging\MultiLogger.cs" />
-    <Compile Include="MXIO\MXIOComConnection.cs" />
     <Compile Include="MXIO\MXIOConnection.cs" />
-    <Compile Include="MXIO\MXIOEthernetConnection.cs" />
+    <Compile Include="MXIO\MXIOE1KConnection.cs" />
     <Compile Include="MXIO\Vendor\MXIO.cs" />
     <Compile Include="MXIO\MXIOException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -38,7 +38,7 @@ namespace CSharpUtils.MXIO
         /// <summary>
         /// The MXIO connections.
         /// </summary>
-        private List<MXIOConnection> connections;
+        private List<MXIOConnection> connections = new List<MXIOConnection>();
 
         public MXIOManager(Logger logger)
         {
@@ -70,20 +70,9 @@ namespace CSharpUtils.MXIO
         /// <param name="port">The port of the MXIO module</param>
         public MXIOConnection Connect(string name, string ip, ushort port)
         {
-            MXIOConnection connection = new MXIOEthernetConnection(this, name, ip, port);
+            MXIOConnection connection = new MXIOE1KConnection(this, name, ip, port);
             this.connections.Add(connection);
             return connection;
-        }
-
-        /// <summary>
-        /// Reset all output ports of all MXIO modules.
-        /// </summary>
-        private void Reset()
-        {
-            foreach (MXIOConnection connection in connections)
-            {
-                connection.Reset();
-            }
         }
     }
 }
